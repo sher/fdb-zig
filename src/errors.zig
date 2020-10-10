@@ -69,7 +69,13 @@ pub const FDBError = error {
   InternalError
 };
 
-pub fn codeToError(err_code: c.fdb_error_t) FDBError {
+pub fn handleError(rc: c.fdb_error_t) FDBError!void {
+  if (rc > 0) {
+    return codeToError(rc);
+  }
+}
+
+fn codeToError(err_code: c.fdb_error_t) FDBError {
   return switch(err_code) {
     1000 => FDBError.OperationFailed,
     1004 => FDBError.TimedOut,
