@@ -30,6 +30,19 @@ pub fn setupNetwork() !void {
     return handleError(c.fdb_setup_network());
 }
 
+pub fn addNetworkThreadCompletionHook(hook: ?fn (?*c_void) callconv(.C) void, param: ?*c_void) !void {
+    return handleError(c.fdb_add_network_thread_completion_hook(hook, param));
+}
+
+pub fn runNetwork() !void {
+    const thread = try std.Thread.spawn(@as(u8, 1), runNetworkThread);
+    // std.debug.print("thread: {}\n", .{thread.data});
+}
+
+pub fn stopNetwork() !void {
+    return handleError(c.fdb_stop_network());
+}
+
 //-------------------------------------
 //- private api
 //-------------------------------------
@@ -50,6 +63,11 @@ fn networkSetOptionNone(option_enum: c.FDBNetworkOption) !void {
     return handleError(c.fdb_network_set_option(option_enum, null, 0));
 }
 
+fn runNetworkThread(i: u8) void {
+    _ = c.fdb_run_network();
+    std.debug.print("run returned\n", .{});
+}
+
 //-------------------------------------
 //- utils
 //-------------------------------------
@@ -65,7 +83,6 @@ fn intToString(int: i64) ![]u8 {
 //-------------------------------------
 test "selectAPIVersion" {
     const result = try selectAPIVersion(c.FDB_API_VERSION);
-    expect(@TypeOf(result) != FDBError);
 }
 
 test "getMaxAPIVersion" {
