@@ -1,4 +1,4 @@
-// how to loop anonimous numbered struct fields?
+// how to loop anonymous numbered struct fields?
 // struct var inside function is accessible globally?
 
 const std = @import("std");

@@ -7,7 +7,7 @@ const FDBNetworkOptionValue = union(enum) {
     Int: i64,
     String: []const u8,
     Bytes: []u8,
-    None: void
+    None: void,
 };
 
 const FDBNetworkOption = enum(c_int) {
@@ -39,17 +39,14 @@ const FDBNetworkOption = enum(c_int) {
     ClientBuggifyEnable = 80,
     ClientBuggifyDisable = 81,
     ClientBuggifySectionActivatedProbability = 82,
-    ClientBuggifySectionFiredProbability = 83
+    ClientBuggifySectionFiredProbability = 83,
 };
 
-pub fn setup() !void {
-}
+pub fn setup() !void {}
 
-pub fn addThreadCompletionHook() !void {
-}
+pub fn addThreadCompletionHook() !void {}
 
-pub fn run() !void {
-}
+pub fn run() !void {}
 
 /// Deprecated
 pub const setLocalAddress = @compileError("deprecated");
@@ -62,9 +59,9 @@ pub const setTLSPlugin = @compileError("deprecated");
 /// Parameter: ([]const u8) path to output directory (or null for current working directory)
 pub fn setTraceEnable(file_path: ?[]const u8) void {
     if (file_path) |path| {
-        networkSetOption(.TraceEnable, .{ .String = path});
+        networkSetOption(.TraceEnable, .{ .String = path });
     } else {
-        networkSetOption(.TraceEnable, .{ .None = .{}});
+        networkSetOption(.TraceEnable, .{ .None = .{} });
     }
 }
 
@@ -83,7 +80,7 @@ pub fn setTraceMaxLogsSize(size_in_bytes: i64) void {
 /// Sets the 'LogGroup' attribute with the specified value for all events in the trace output files. The default log group is 'default'.
 /// Parameter: ([]const u8) value of the LogGroup attribute
 pub fn setTraceLogGroup(group_name: []const u8) void {
-    networkSetOption(.TraceLogGroup, .{ .String = group_name});
+    networkSetOption(.TraceLogGroup, .{ .String = group_name });
 }
 
 /// Select the format of the log files. xml (the default) and json are supported.
@@ -92,20 +89,20 @@ pub fn setTraceFormat(format: []const u8) void {
     switch (format) {
         "xml", "XML" => networkSetOption(.TraceFormat, .{ .String = "xml" }),
         "json", "JSON" => networkSetOption(.TraceFormat, .{ .String = "json" }),
-        else => unreachable
+        else => unreachable,
     }
 }
 
 /// Set internal tuning or debugging knobs
 /// Parameter: ([]const u8) knob_name=knob_value
 pub fn setKnob(setting_string: []const u8) void {
-    networkSetOption(.Knob, .{ .String = setting_string});
+    networkSetOption(.Knob, .{ .String = setting_string });
 }
 
 /// Set the certificate chain
 /// Parameter: ([]u8]) certificates
 pub fn setTLSCertBytes(bytes: []u8) void {
-    networkSetOption(.TLSCertBytes, .{ .Bytes = bytes});
+    networkSetOption(.TLSCertBytes, .{ .Bytes = bytes });
 }
 
 /// Set the file from which to load the certificate chain
@@ -147,7 +144,7 @@ pub fn setBuggifyDisable() void {
 pub fn setBuggifySectionActivatedProbability(probability: u4) void {
     switch (probability) {
         0...100 => networkSetOption(.BuggifySectionActivatedProbability, .{ .Int = probability }),
-        else => unreachable
+        else => unreachable,
     }
 }
 
@@ -156,7 +153,7 @@ pub fn setBuggifySectionActivatedProbability(probability: u4) void {
 pub fn setBuggifySectionFiredProbability(probability: u4) void {
     switch (probability) {
         0...100 => networkSetOption(.BuggifySectionFiredProbability, .{ .Int = probability }),
-        else => unreachable
+        else => unreachable,
     }
 }
 
@@ -237,7 +234,7 @@ pub fn setClientBuggifyDisable() void {
 pub fn setClientBuggifySectionActivatedProbability(probability: u4) void {
     switch (probability) {
         0...100 => networkSetOption(.ClientBuggifySectionActivatedProbability, .{ .Int = probability }),
-        else => unreachable
+        else => unreachable,
     }
 }
 
@@ -246,7 +243,7 @@ pub fn setClientBuggifySectionActivatedProbability(probability: u4) void {
 pub fn setClientBuggifySectionFiredProbability(probability: u4) void {
     switch (probability) {
         0...100 => networkSetOption(.ClientBuggifySectionFiredProbability, .{ .Int = probability }),
-        else => unreachable
+        else => unreachable,
     }
 }
 
@@ -270,6 +267,7 @@ fn networkSetOption(option: FDBNetworkOption, value: FDBNetworkOptionValue) void
         .String => networkSetOptionString(option_enum, value.String) catch unreachable,
         .Bytes => networkSetOptionBytes(option_enum, value.Bytes) catch unreachable,
         .None => networkSetOptionNone(option_enum) catch unreachable,
+        else => unreachable,
     };
 }
 
